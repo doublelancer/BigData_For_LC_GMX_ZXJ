@@ -20,18 +20,24 @@ public class DataProcess {
 		DataProcess task1 = new DataProcess();
 		long startTime = System.currentTimeMillis();
 		outTask task3 = new outTask(map);		
-		file = new File("ProcessLog.log");
-		try {
-			if(!file.exists()) {
-				file.createNewFile();
-			}		
-			fw = new FileWriter(file);
-			bw = new BufferedWriter(fw);		
-			BufferedWriter write_data_num = new BufferedWriter(new FileWriter(new File("count.log")));
+		try {					
+			bw = new BufferedWriter(new FileWriter(new File("ProcessLog.log")));
 			
 			task1.read_data();
 			task1.traverse_process();
-		
+			
+			bw.close();			
+		}catch (Exception e) {
+            e.printStackTrace();
+        }			
+		try {		
+			task3.run_outTask();
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		long endTime = System.currentTimeMillis();
+		try {
+			BufferedWriter write_data_num = new BufferedWriter(new FileWriter(new File("count.log")));
 			write_data_num.write("Total data:"+data_num+"\n");
 			write_data_num.write("Total price error:"+price_error+"\n");
 			write_data_num.write("Total new price error:"+newprice_error+"\n");
@@ -43,22 +49,17 @@ public class DataProcess {
 			write_data_num.write("Total turnover error:"+turnover_error+"\n");
 			write_data_num.write("Total high error:"+high_error+"\n");
 			write_data_num.write("Total low error:"+low_error+"\n");
+			write_data_num.write("≥Ã–Ú‘À–– ±º‰£∫" + (endTime - startTime) + "ms");
 			write_data_num.close();
-			bw.close();	
-		}catch (Exception e) {
-            e.printStackTrace();
-        }			
-		try {		
-			task3.run_outTask();
+			
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
-			
-		long endTime = System.currentTimeMillis();
-		System.out.println("¬≥√å√ê√≤√î√ã√ê√ê√ä¬±¬º√§¬£¬∫" + (endTime - startTime) + "ms");
 	}
 	
-	private void read_data() {		
+	private void read_data() {
+		long last_data_time_marketsz = 0;
+		long last_data_time_marketsh = 0;
 		try {
 			String filename = "F:\\Java\\Test\\src\\ReadData\\data.txt";
 			File file = new File(filename);
@@ -67,9 +68,9 @@ public class DataProcess {
 			String []item;
 			data d;
 			reader = new BufferedReader(new FileReader(file));
-			strTemp = reader.readLine();
 			
 			data_num++;
+			strTemp = reader.readLine();			
 			item = strTemp.split(",");	
 			d = new data(item[0],Integer.parseInt(item[1]),Integer.parseInt(item[2]),Integer.parseInt(item[3]),Float.parseFloat(item[4]),Float.parseFloat(item[5]),Float.parseFloat(item[6]),Float.parseFloat(item[7]),Float.parseFloat(item[8]),Float.parseFloat(item[9]),Float.parseFloat(item[10]),Float.parseFloat(item[11]),
             		  Float.parseFloat(item[12]),Float.parseFloat(item[13]),Float.parseFloat(item[14]),Float.parseFloat(item[15]),Float.parseFloat(item[16]),Float.parseFloat(item[17]),Float.parseFloat(item[18]),Integer.parseInt(item[19]),Integer.parseInt(item[20]),Integer.parseInt(item[21]),Integer.parseInt(item[22]),
@@ -95,23 +96,14 @@ public class DataProcess {
 	            		  Float.parseFloat(item[34]),Float.parseFloat(item[35]),Float.parseFloat(item[36]),Float.parseFloat(item[37]),Float.parseFloat(item[38]),Integer.parseInt(item[39]),Integer.parseInt(item[40]),Integer.parseInt(item[41]),Integer.parseInt(item[42]),Integer.parseInt(item[43]),Integer.parseInt(item[44]),
 	            				  Integer.parseInt(item[45]),Integer.parseInt(item[46]),Integer.parseInt(item[47]),Integer.parseInt(item[48]),Float.parseFloat(item[49]),Long.parseLong(item[50]),Double.parseDouble(item[51]),Long.parseLong(item[52]),Long.parseLong(item[53]),Float.parseFloat(item[54]),Float.parseFloat(item[55]),
 	            				  Float.parseFloat(item[56]),Float.parseFloat(item[57]),Float.parseFloat(item[58]),Float.parseFloat(item[59]),Float.parseFloat(item[60]),Long.parseLong(item[61]),Float.parseFloat(item[62]),Float.parseFloat(item[63]));
-				if(d.market == "SZ") {
-					if(last_data_time_marketsz == 0) {
-						last_data_time_marketsz = d.LocalTime;
-					}
-					else {
-						inter_more_than_30s(d,last_data_time_marketsz);
-						last_data_time_marketsz = d.LocalTime;
-					}
+				if(d.market == "SZ") {				
+					inter_more_than_30s(d,last_data_time_marketsz);
+					last_data_time_marketsz = d.LocalTime;					
 				}
 				else if(d.market == "SH") {
-					if(last_data_time_marketsh == 0) {
-						last_data_time_marketsh = d.LocalTime;
-					}
-					else {
-						inter_more_than_30s(d,last_data_time_marketsh);
-						last_data_time_marketsh = d.LocalTime;
-					}
+					inter_more_than_30s(d,last_data_time_marketsh);
+					last_data_time_marketsh = d.LocalTime;
+					
 				}
 				put_to_map(d);
 	          }						
@@ -282,9 +274,7 @@ public class DataProcess {
 	private static int low_error = 0;
 	private static int volume_error = 0;	
 	private static int data_num = 0;
-	public static File file;
-	public static FileWriter fw;
-	public static BufferedWriter bw;
+	private static BufferedWriter bw;
 }
 
 
