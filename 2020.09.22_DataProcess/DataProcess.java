@@ -55,12 +55,10 @@ public class DataProcess {
 		}
 			
 		long endTime = System.currentTimeMillis();
-		System.out.println("程序运行时间：" + (endTime - startTime) + "ms");
+		System.out.println("鲁脤脨貌脭脣脨脨脢卤录盲拢潞" + (endTime - startTime) + "ms");
 	}
 	
-	private void read_data() {
-		long last_data_time_marketsh = 0;
-		long last_data_time_marketsz = 0;
+	private void read_data() {		
 		try {
 			String filename = "F:\\Java\\Test\\src\\ReadData\\data.txt";
 			File file = new File(filename);
