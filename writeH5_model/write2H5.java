@@ -4,7 +4,7 @@ class Write2H5  {
     }
 
     public void run_outTask() {
-        String FILENAME = "C:\\Users\\double lancer\\Desktop\\data.h5";
+        String FILENAME = path;
         long file_id = -1;
         long group_id = -1;
         try {
