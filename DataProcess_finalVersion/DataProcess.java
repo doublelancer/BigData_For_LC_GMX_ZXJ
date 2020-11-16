@@ -66,7 +66,7 @@ public class DataProcess{
         long startTime = System.currentTimeMillis();
         try {
             process task1 = new process();
-            outTask task3 = new outTask(map);
+            Write2H5 task3 = new Write2H5(map);
             Boolean data_error = false;
             data_error = task1.read_data(date);
             if(data_error){
@@ -76,7 +76,7 @@ public class DataProcess{
 
             bw.close();
 
-            task3.run_outTask(date);
+            task3.write(date);
         }catch (Exception e) {
             e.printStackTrace();
         }
